@@ -370,32 +370,137 @@ function group(array, keySelector, valueSelector) {
  */
 
 const cssSelectorBuilder = {
-  element(/* value */) {
-    throw new Error('Not implemented');
+  result: '',
+  index: null,
+
+  /**
+   * @returns {string}
+   */
+  stringify() {
+    return this.result;
   },
 
-  id(/* value */) {
-    throw new Error('Not implemented');
+  createObject(object) {
+    const emptyObject = Object.create(cssSelectorBuilder);
+
+    return Object.assign(emptyObject, object);
   },
 
-  class(/* value */) {
-    throw new Error('Not implemented');
+  /**
+   * @param {string} value
+   * @returns {cssSelectorBuilder}
+   */
+  element(value) {
+    const index = 1;
+    this.error(index);
+
+    return this.createObject({
+      index,
+      result: this.result + value,
+    });
   },
 
-  attr(/* value */) {
-    throw new Error('Not implemented');
+  /**
+   * @param {string} value
+   * @returns {cssSelectorBuilder}
+   */
+  id(value) {
+    const index = 2;
+    this.error(index);
+
+    return this.createObject({
+      index,
+      result: `${this.result}#${value}`,
+    });
   },
 
-  pseudoClass(/* value */) {
-    throw new Error('Not implemented');
+  /**
+   * @param {string} value
+   * @returns {cssSelectorBuilder}
+   */
+  class(value) {
+    const index = 3;
+    this.error(index);
+
+    return this.createObject({
+      index,
+      result: `${this.result}.${value}`,
+    });
   },
 
-  pseudoElement(/* value */) {
-    throw new Error('Not implemented');
+  /**
+   * @param {string} value
+   * @returns {cssSelectorBuilder}
+   */
+  attr(value) {
+    const index = 4;
+    this.error(index);
+
+    return this.createObject({
+      index,
+      result: `${this.result}[${value}]`,
+    });
   },
 
-  combine(/* selector1, combinator, selector2 */) {
-    throw new Error('Not implemented');
+  /**
+   * @param {string} value
+   * @returns {cssSelectorBuilder}
+   */
+  pseudoClass(value) {
+    const index = 5;
+    this.error(index);
+
+    return this.createObject({
+      index,
+      result: `${this.result}:${value}`,
+    });
+  },
+
+  /**
+   * @param {string} value
+   * @returns {cssSelectorBuilder}
+   */
+  pseudoElement(value) {
+    const index = 6;
+    this.error(index);
+
+    return this.createObject({
+      index,
+      result: `${this.result}::${value}`,
+    });
+  },
+
+  /**
+   * @param {cssSelectorBuilder} selector1
+   * @param {string} combinator
+   * @param {cssSelectorBuilder} selector2
+   * @returns {cssSelectorBuilder}
+   */
+  combine(selector1, combinator, selector2) {
+    const index = 7;
+    this.error(index);
+
+    return this.createObject({
+      index,
+      result: `${selector1.result} ${combinator} ${selector2.result}`,
+    });
+  },
+
+  /**
+   * @param {number} id
+   */
+  error(id) {
+    if (id === this.index && (id === 1 || id === 2 || id === 6)) {
+      throw new Error(
+        'Element, id and pseudo-element should not occur more then one time inside the selector'
+      );
+    }
+
+    if (id < this.index) {
+      throw new Error(
+        'Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element'
+      );
+    }
   },
 };
 
